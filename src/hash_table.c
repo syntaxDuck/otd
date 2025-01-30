@@ -1,5 +1,6 @@
 #include "hash_table.h"
 #include <_string.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,11 +44,14 @@ void ht_free(HashTable table) {
   }
 }
 
+// TODO: Need to make function that clear the linked list and a function that
+// only frees that singular entry
 void free_entry(Entry *entry) {
   free(entry->key);
   free(entry->val);
   if (entry->next)
     free_entry(entry->next);
+  free(entry);
 }
 
 void ht_insert(HashTable table, char *key, char *val) {
@@ -57,7 +61,7 @@ void ht_insert(HashTable table, char *key, char *val) {
   if (table.buckets[index]) {
     Entry *existing_entry = table.buckets[index];
     while (existing_entry->next) {
-      if (!strcmp(existing_entry->key, key)) {
+      if (strcmp(existing_entry->key, key) == 0) {
         free(existing_entry->val);
         existing_entry->val = strdup(val);
         return;
@@ -78,10 +82,65 @@ void ht_insert(HashTable table, char *key, char *val) {
   }
 }
 
+// TODO: Finish testing this I think the only, last, and inbetween cases are
+// working
+int ht_remove(HashTable table, char *key) {
+  Entry **entry_stack = malloc(sizeof(Entry) * table.size);
+  unsigned int stack_len = 0;
+
+  Entry *entry = table.buckets[ht_get_index(table.hash_type, key, table.size)];
+  while (true) {
+    if (strcmp(entry->key, key) == 0) {
+      stack_len--;
+      break;
+    }
+
+    entry_stack[stack_len] = entry;
+    stack_len++;
+    entry = entry->next;
+
+    if (!entry)
+      return 1;
+  }
+
+  if (!entry->next && !stack_len) {
+    free_entry(entry);
+    table.buckets[ht_get_index(table.hash_type, key, table.size)] = NULL;
+    return 0;
+  }
+
+  // Has following nodes
+  if (entry->next) {
+
+    // Is first node in ll
+    if (!stack_len) {
+      table.buckets[ht_get_index(table.hash_type, key, table.size)] =
+          entry->next;
+      memcpy(entry, entry->next, sizeof(Entry));
+      free(entry->next);
+    }
+
+    // Inbetween node
+    else {
+      entry_stack[stack_len]->next = entry->next;
+      free_entry(entry);
+    }
+
+  }
+
+  // Is last node in ll
+  else {
+    free_entry(entry_stack[stack_len]->next);
+    entry_stack[stack_len]->next = NULL;
+  }
+
+  free(entry_stack);
+  return 0;
+}
+
 Entry ht_get_entry(HashTable table, char *key) {
   unsigned long index = ht_get_index(table.hash_type, key, table.size);
   Entry entry = *table.buckets[index];
-
   return entry;
 }
 
@@ -96,12 +155,15 @@ void ht_print(HashTable table) {
         for (int j = 0; j < node; j++)
           printf("⎯⎯⎯⎯");
 
-        printf("Node: %d Key: %s Val: %s\n", node, table.buckets[i]->key,
-               table.buckets[i]->val);
+        printf("Node: %d Key: %s Val: %s\n", node, next->key, next->val);
         next = next->next;
         node++;
       }
     } else
       printf("Index: %lu is NULL\n", i);
   }
+}
+
+void entry_print(Entry entry) {
+  printf("Key: %s, Val: %s, Next: %p\n", entry.key, entry.val, entry.next);
 }

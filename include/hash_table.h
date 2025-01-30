@@ -29,4 +29,6 @@ void free_entry(Entry *entry);
 void ht_insert(HashTable htable, char *key, char *val);
 Entry ht_get_entry(HashTable table, char *key);
 void ht_print(HashTable table);
+int ht_remove(HashTable table, char *key);
+void entry_print(Entry entry);
 #endif

@@ -1,3 +1,0 @@
-/Users/kameroncomer/dev/otd/build/CMakeFiles/main.dir
-/Users/kameroncomer/dev/otd/build/CMakeFiles/edit_cache.dir
-/Users/kameroncomer/dev/otd/build/CMakeFiles/rebuild_cache.dir
