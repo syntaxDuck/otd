@@ -5,30 +5,38 @@
 #include <stdlib.h>
 
 typedef struct Entry {
-  char *key;
-  char *val;
-  struct Entry *next;
+    char *key;
+    char *val;
+    struct Entry *next;
 } Entry;
 
 typedef struct {
-  Entry **buckets;
-  size_t size;
-  int hash_type;
-
+    Entry **buckets;
+    size_t size;
+    int hash_type;
 } HashTable;
 
 enum hash_function {
-  DJB2,
+    DJB2,
 };
 
+// Hash-related functions
 unsigned long ht_get_index(int hash_type, const char *str, size_t size);
 unsigned long djb2_hash(const char *str, size_t size);
-HashTable ht_create(int hash_type, size_t size);
-void ht_free(HashTable table);
+
+// Core functionality
+HashTable *ht_create(int hash_type, size_t size);
+void ht_insert(HashTable *htable, char *key, char *val);
+Entry *ht_get_entry(HashTable *table, char *key);
+int ht_remove(HashTable *table, char *key);
+
+// Utility functions
+void ht_print(HashTable *table);
+void entry_print(const Entry *entry);
+
+// Memory management
+void free_ht(HashTable *table);
+void free_entries(Entry *entry);
 void free_entry(Entry *entry);
-void ht_insert(HashTable htable, char *key, char *val);
-Entry ht_get_entry(HashTable table, char *key);
-void ht_print(HashTable table);
-int ht_remove(HashTable table, char *key);
-void entry_print(Entry entry);
+
 #endif

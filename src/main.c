@@ -2,9 +2,9 @@
 #include <stdio.h>
 
 int main() {
-  HashTable table = ht_create(DJB2, 10);
+  HashTable *table = ht_create(DJB2, 10);
 
-  printf("Hash Type: %d, Size: %lu\n", table.hash_type, table.size);
+  printf("Hash Type: %d, Size: %lu\n", table->hash_type, table->size);
 
   ht_insert(table, "apple", "red");
   ht_insert(table, "banana", "yellow");
@@ -60,10 +60,14 @@ int main() {
 
   // ht_print(table);
 
-  ht_remove(table, "peach");
+  ht_remove(table, "apple");
+  ht_remove(table, "cranberry");
+  ht_remove(table, "pineapple");
+  ht_remove(table, "watermelon");
 
-  printf("\n\n");
   ht_print(table);
+
+  free_ht(table);
 
   return 0;
 }
