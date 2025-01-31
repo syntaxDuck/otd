@@ -60,10 +60,10 @@ int main() {
 
   // ht_print(table);
 
-  ht_remove(table, "apple");
-  ht_remove(table, "cranberry");
-  ht_remove(table, "pineapple");
-  ht_remove(table, "watermelon");
+  // ht_remove(table, "apple");
+  // ht_remove(table, "cranberry");
+  // ht_remove(table, "pineapple");
+  // ht_remove(table, "watermelon");
 
   ht_print(table);
 

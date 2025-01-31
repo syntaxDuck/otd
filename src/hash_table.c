@@ -69,8 +69,15 @@ void free_entries(Entry *entry) {
 
 void ht_insert(HashTable *table, char *key, char *val) {
   unsigned long index = ht_get_index(table->hash_type, key, table->size);
+  bool first = false;
 
   Entry *existing_entry = table->buckets[index];
+  if (!existing_entry) {
+    table->buckets[index] = malloc(sizeof(Entry));
+    existing_entry = table->buckets[index];
+    first = true;
+  }
+
   while (existing_entry->next) {
     if (strcmp(existing_entry->key, key) == 0) {
       free(existing_entry->val);
@@ -83,7 +90,9 @@ void ht_insert(HashTable *table, char *key, char *val) {
   Entry *new_entry = malloc(sizeof(Entry));
   new_entry->key = strdup(key);
   new_entry->val = strdup(val);
-  new_entry->next = table->buckets[index];
+
+  if (!first)
+    new_entry->next = table->buckets[index];
   table->buckets[index] = new_entry;
 }
 
