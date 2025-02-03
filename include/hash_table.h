@@ -5,19 +5,20 @@
 #include <stdlib.h>
 
 typedef struct Entry {
-    char *key;
-    char *val;
-    struct Entry *next;
+  char *key;
+  char *val;
+  struct Entry *next;
 } Entry;
 
 typedef struct {
-    Entry **buckets;
-    size_t size;
-    int hash_type;
+  Entry **buckets;
+  size_t size;
+  size_t num_entries;
+  int hash_type;
 } HashTable;
 
 enum hash_function {
-    DJB2,
+  DJB2,
 };
 
 // Hash-related functions
@@ -26,9 +27,11 @@ unsigned long djb2_hash(const char *str, size_t size);
 
 // Core functionality
 HashTable *ht_create(int hash_type, size_t size);
-void ht_insert(HashTable *htable, char *key, char *val);
+int ht_insert(HashTable *htable, char *key, char *val);
 Entry *ht_get_entry(HashTable *table, char *key);
 int ht_remove(HashTable *table, char *key);
+void ht_resize(HashTable **table, size_t new_size);
+void ht_clear(HashTable *table);
 
 // Utility functions
 void ht_print(HashTable *table);

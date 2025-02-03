@@ -67,7 +67,7 @@ void free_entries(Entry *entry) {
   }
 }
 
-void ht_insert(HashTable *table, char *key, char *val) {
+int ht_insert(HashTable *table, char *key, char *val) {
   unsigned long index = ht_get_index(table->hash_type, key, table->size);
   bool first = false;
 
@@ -79,21 +79,26 @@ void ht_insert(HashTable *table, char *key, char *val) {
   }
 
   while (existing_entry->next) {
+    // If key already exists update value
     if (strcmp(existing_entry->key, key) == 0) {
       free(existing_entry->val);
       existing_entry->val = strdup(val);
-      return;
+      return 0;
     }
     existing_entry = existing_entry->next;
   }
 
   Entry *new_entry = malloc(sizeof(Entry));
+  if (!new_entry)
+    return 1;
   new_entry->key = strdup(key);
   new_entry->val = strdup(val);
 
   if (!first)
     new_entry->next = table->buckets[index];
   table->buckets[index] = new_entry;
+  table->num_entries++;
+  return 0;
 }
 
 int ht_remove(HashTable *table, char *key) {
@@ -109,6 +114,7 @@ int ht_remove(HashTable *table, char *key) {
         table->buckets[index] = entry->next;
       }
       free_entry(entry);
+      table->num_entries--;
       return 0; // Successfully removed
     }
     prev_entry = entry;
@@ -149,4 +155,25 @@ void ht_print(HashTable *table) {
 
 void entry_print(const Entry *entry) {
   printf("Key: %s, Val: %s, Next: %p\n", entry->key, entry->val, entry->next);
+}
+
+void ht_resize(HashTable **table, size_t new_size) {
+  HashTable *new_table = ht_create((*table)->hash_type, new_size);
+  for (size_t i = 0; i < (*table)->size; i++) {
+    Entry *entry = (*table)->buckets[i];
+    while (entry) {
+      ht_insert(new_table, entry->key, entry->val);
+      entry = entry->next;
+    }
+  }
+  free_ht(*table);
+  *table = new_table;
+}
+
+void ht_clear(HashTable *table) {
+  for (size_t i = 0; i < table->size; i++) {
+    free_entries(table->buckets[i]);
+    table->buckets[i] = NULL;
+  }
+  table->num_entries = 0;
 }

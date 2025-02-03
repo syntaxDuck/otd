@@ -66,7 +66,11 @@ int main() {
   // ht_remove(table, "watermelon");
 
   ht_print(table);
+  ht_resize(&table, 5);
+  ht_print(table);
 
+  ht_clear(table);
+  ht_print(table);
   free_ht(table);
 
   return 0;
