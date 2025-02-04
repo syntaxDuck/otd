@@ -1,8 +1,12 @@
 #ifndef HASH_TABLE_H
 #define HASH_TABLE_H
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
+
+#define DEFAULT_TABLE_SIZE 16
+#define DEFAULT_LOAD_FACTOR 0.75
 
 typedef struct Entry {
   char *key;
@@ -14,15 +18,15 @@ typedef struct {
   Entry **buckets;
   size_t size;
   size_t num_entries;
-  int hash_type;
+  short hash_type;
+  unsigned long (*hash_function)(const char *, size_t);
+  float max_load_factor;
 } HashTable;
 
-enum hash_function {
-  DJB2,
-};
+enum hash_function { DJB2, CUSTOM };
 
 // Hash-related functions
-unsigned long ht_get_index(int hash_type, const char *str, size_t size);
+unsigned long ht_get_index(HashTable *table, const char *str);
 unsigned long djb2_hash(const char *str, size_t size);
 
 // Core functionality
@@ -32,9 +36,13 @@ Entry *ht_get_entry(HashTable *table, char *key);
 int ht_remove(HashTable *table, char *key);
 void ht_resize(HashTable **table, size_t new_size);
 void ht_clear(HashTable *table);
+bool ht_contains(HashTable *table, char *key);
+float ht_get_load_factor(HashTable *table);
+HashTable *ht_copy_table(HashTable *table, size_t size);
 
 // Utility functions
 void ht_print(HashTable *table);
+void ht_print_load_factor(HashTable *table);
 void entry_print(const Entry *entry);
 
 // Memory management

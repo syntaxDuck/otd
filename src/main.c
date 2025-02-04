@@ -2,9 +2,7 @@
 #include <stdio.h>
 
 int main() {
-  HashTable *table = ht_create(DJB2, 10);
-
-  printf("Hash Type: %d, Size: %lu\n", table->hash_type, table->size);
+  HashTable *table = ht_create(DJB2, 0);
 
   ht_insert(table, "apple", "red");
   ht_insert(table, "banana", "yellow");
