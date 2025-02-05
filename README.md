@@ -222,7 +222,7 @@ If you're working in a multi-threaded environment, making your hash table **thre
 
 - 1. **Resize/Rehash** – Dynamically resize the hash table when it becomes too full.
 
-2. **Custom Hash Functions** – Allow users to define their own hash functions.
+- 2. **Custom Hash Functions** – Allow users to define their own hash functions.
 
 - 3. **Size Tracking** – Add a function to return the current number of entries in the table.
 
