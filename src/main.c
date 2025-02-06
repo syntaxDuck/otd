@@ -1,8 +1,20 @@
+#include "generics.h"
 #include "hash_table.h"
 #include <stdio.h>
+#include <string.h>
 
 int main() {
   HashTable *table = ht_create(DJB2, 0);
+
+  void *s = "Hello World!";
+  GenericValue value =
+      create_generic("Hello World", strlen(s), TYPE_CHAR_POINTER);
+  int i = 8;
+  GenericValue value1 = create_generic(&i, sizeof(int), TYPE_INT);
+  print_generic(value);
+  printf("\n");
+  print_generic(value1);
+  printf("\n");
 
   ht_insert(table, "apple", "red");
   ht_insert(table, "banana", "yellow");
@@ -63,12 +75,12 @@ int main() {
   // ht_remove(table, "pineapple");
   // ht_remove(table, "watermelon");
 
-  ht_print(table);
-  ht_resize(&table, 5);
-  ht_print(table);
-
-  ht_clear(table);
-  ht_print(table);
+  // ht_print(table);
+  // ht_resize(&table, 5);
+  // ht_print(table);
+  //
+  // ht_clear(table);
+  // ht_print(table);
   free_ht(table);
 
   return 0;
