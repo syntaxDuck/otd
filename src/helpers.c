@@ -4,6 +4,7 @@
 #include <dirent.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 int list_files(const char *path, const char *ext) {
   struct dirent *entry;
@@ -20,6 +21,14 @@ int list_files(const char *path, const char *ext) {
     }
   }
   return 0;
+}
+
+int file_exists(const char *filename) { return access(filename, F_OK) == 0; }
+
+void prompt(const char *prompt, char *output, size_t output_len) {
+  printf("%s", prompt);
+  fgets(output, output_len, stdin);
+  output[strcspn(output, "\n")] = '\0';
 }
 
 int decode_base64url(const char *base64_str, unsigned char *output,

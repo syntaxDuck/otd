@@ -7,7 +7,7 @@ int main() {
     perror("Error initializing sodium");
     exit(1);
   }
-
+  create_vault();
   open_vault();
   return 0;
 }
