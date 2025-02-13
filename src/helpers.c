@@ -11,7 +11,7 @@ int list_files(const char *path, const char *ext) {
   DIR *dir = opendir(path);
 
   if (!dir) {
-    perror("Unable to open directory");
+    perror("Error unable to open directory");
     return -1;
   }
 
@@ -36,7 +36,7 @@ int decode_base64url(const char *base64_str, unsigned char *output,
   if (sodium_base642bin(output, *output_len, base64_str, strlen(base64_str),
                         NULL, output_len, NULL,
                         sodium_base64_VARIANT_ORIGINAL_NO_PADDING) != 0) {
-    perror("Decoding base64 string failed");
+    perror("Error decoding base64 string");
     return -1;
   }
   return 0;

@@ -6,6 +6,8 @@
 #include "sodium/crypto_box.h"
 #include "sodium/crypto_pwhash.h"
 
+#define VAULT_EXTENSION ".vault"
+
 typedef struct {
   unsigned char salt[crypto_pwhash_SALTBYTES];
   unsigned char master_hash[crypto_pwhash_STRBYTES];
