@@ -48,8 +48,8 @@ int hash_master_password(const char *password, char *hashed_output) {
                            crypto_pwhash_MEMLIMIT_SENSITIVE);
 }
 
-int write_vault(const char *vault_name, Vault *vault) {
-  FILE *file = fopen(vault_name, "wb");
+int write_vault(Vault *vault) {
+  FILE *file = fopen(vault->file_name, "wb");
   if (!file) {
     perror("Failed to create vault file");
     return -1;
@@ -60,22 +60,31 @@ int write_vault(const char *vault_name, Vault *vault) {
   return 0;
 }
 
-/* ---- Vault Creation ---- */
-
-Vault *create_vault() {
+Vault *init_vault() {
   Vault *vault = malloc(sizeof(Vault));
   if (!vault) {
     perror("Error allocating memory for vault");
     return NULL;
   }
+  vault->file_name = malloc(MAX_VAULT_FILE_LENGTH);
+  if (!vault->file_name) {
+    perror("Error allocating memory for vault file");
+    free(vault);
+    return NULL;
+  }
+  return vault;
+}
 
-  char vault_name[100];
-  if (get_vault_name_input(vault_name, sizeof(vault_name)) != 0) {
+/* ---- Vault Creation ---- */
+
+Vault *create_vault() {
+  Vault *vault = init_vault();
+  if (get_vault_name_input(vault->file_name, MAX_VAULT_FILE_LENGTH != 0)) {
     free(vault);
     return NULL;
   }
 
-  char password[100];
+  char password[MAX_VAULT_PASSWORD_LENGTH];
   prompt("Please Enter Master Password for Vault: ", password,
          sizeof(password));
 
@@ -94,12 +103,12 @@ Vault *create_vault() {
     return NULL;
   }
 
-  if (write_vault(vault_name, vault) != 0) {
+  if (write_vault(vault) != 0) {
     free(vault);
     return NULL;
   }
 
-  printf("Vault %s created successfully.\n\n", vault_name);
+  printf("Vault %s created successfully.\n\n", vault->file_name);
   return vault;
 }
 
@@ -112,8 +121,8 @@ int get_existing_vault_name(char *vault_name, size_t size) {
   return file_exists(vault_name) ? 0 : -1;
 }
 
-int read_vault_data(const char *vault_name, Vault *vault) {
-  FILE *file = fopen(vault_name, "rb");
+int read_vault_data(Vault *vault) {
+  FILE *file = fopen(vault->file_name, "rb");
   if (!file) {
     perror("Error opening vault file");
     return -1;
@@ -130,19 +139,14 @@ int validate_vault_password(const char *hash) {
 }
 
 Vault *open_vault() {
-  Vault *vault = malloc(sizeof(Vault));
-  if (!vault) {
-    perror("Error allocating memory for vault");
-    return NULL;
-  }
+  Vault *vault = init_vault();
 
-  char vault_name[100];
-  if (get_existing_vault_name(vault_name, sizeof(vault_name)) != 0) {
+  if (get_existing_vault_name(vault->file_name, MAX_VAULT_FILE_LENGTH != 0)) {
     free(vault);
     return NULL;
   }
 
-  if (read_vault_data(vault_name, vault) != 0) {
+  if (read_vault_data(vault) != 0) {
     free(vault);
     return NULL;
   }
@@ -153,7 +157,7 @@ Vault *open_vault() {
     return NULL;
   }
 
-  printf("Vault %s opened successfully.\n", vault_name);
+  printf("Vault %s opened successfully.\n", vault->file_name);
   return vault;
 }
 

@@ -241,3 +241,9 @@ If you're working in a multi-threaded environment, making your hash table **thre
 ### Next Steps:
 
 - Which of these features would you like to focus on next? Would you like to implement them step by step, or do you want further guidance on a specific one?
+
+### Password Manager Todo:
+
+- Finish write vault routine
+- Finish read vault routine
+- Implement adding and removing password from vaults
