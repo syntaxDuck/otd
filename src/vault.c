@@ -10,8 +10,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* ---- Helper Functions ---- */
-
 int confirm_overwrite() {
   char response[10];
   while (true) {
@@ -74,8 +72,6 @@ Vault *init_vault() {
   }
   return vault;
 }
-
-/* ---- Vault Creation ---- */
 
 Vault *create_vault() {
   Vault *vault = init_vault();
