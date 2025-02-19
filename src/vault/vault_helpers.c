@@ -1,4 +1,3 @@
-#include "helpers.h"
 #include "sodium/crypto_pwhash.h"
 #include "sodium/utils.h"
 #include <dirent.h>

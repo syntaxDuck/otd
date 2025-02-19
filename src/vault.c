@@ -1,14 +1,17 @@
 #include "vault.h"
-#include "helpers.h"
 #include "sodium/crypto_auth_hmacsha256.h"
 #include "sodium/crypto_pwhash.h"
 #include "sodium/randombytes.h"
+#include "vault/vault_helpers.h"
+#include "vault/vault_io.h"
 #include <ctype.h>
 #include <sodium.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+// -- Helper Functions -- //
 
 int confirm_overwrite() {
   char response[10];
@@ -44,18 +47,6 @@ int hash_master_password(const char *password, char *hashed_output) {
   return crypto_pwhash_str(hashed_output, password, strlen(password),
                            crypto_pwhash_OPSLIMIT_SENSITIVE,
                            crypto_pwhash_MEMLIMIT_SENSITIVE);
-}
-
-int write_vault(Vault *vault) {
-  FILE *file = fopen(vault->file_name, "wb");
-  if (!file) {
-    perror("Failed to create vault file");
-    return -1;
-  }
-  fwrite(vault->master_hash, 1, sizeof(vault->master_hash), file);
-  fwrite(vault->hmac, 1, sizeof(vault->hmac), file);
-  fclose(file);
-  return 0;
 }
 
 Vault *init_vault() {
@@ -117,17 +108,6 @@ int get_existing_vault_name(char *vault_name, size_t size) {
   return file_exists(vault_name) ? 0 : -1;
 }
 
-int read_vault_data(Vault *vault) {
-  FILE *file = fopen(vault->file_name, "rb");
-  if (!file) {
-    perror("Error opening vault file");
-    return -1;
-  }
-  fread(vault->master_hash, 1, crypto_pwhash_STRBYTES, file);
-  fclose(file);
-  return 0;
-}
-
 int validate_vault_password(const char *hash) {
   char password[100];
   prompt("Please Enter Vault Password: ", password, sizeof(password));
@@ -142,7 +122,7 @@ Vault *open_vault() {
     return NULL;
   }
 
-  if (read_vault_data(vault) != 0) {
+  if (read_vault(vault) != 0) {
     free(vault);
     return NULL;
   }
