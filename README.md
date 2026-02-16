@@ -1,25 +1,68 @@
-### Hash Map Todo:
+# OTD - Password Vault Manager
 
-- 1. **Resize/Rehash** – Dynamically resize the hash table when it becomes too full.
+A secure password vault manager written in C using libsodium for cryptographic operations.
 
-- 2. **Custom Hash Functions** – Allow users to define their own hash functions.
+## Features
 
-- 3. **Size Tracking** – Add a function to return the current number of entries in the table.
+### Hash Table
+- Dynamic resizing with automatic rehashing
+- Custom hash function support (DJB2 or custom)
+- Load factor monitoring
+- Key existence checking
+- Clear table functionality
+- Copy/clone support
 
-- 4. **Key Existence Check** – Quickly check if a key exists in the table.
+### Vault
+- Create new password vaults with master password
+- Open and authenticate existing vaults
+- Secure password hashing using `crypto_pwhash`
+- HMAC-based key derivation using `crypto_auth_hmacsha256`
 
-- 5. **Clear Function** – Efficiently clear the table without deallocating it.
+## Requirements
 
-6. **Iterator** – Implement an iterator to traverse the table.
-7. **Generics Support** – Allow storing different data types (using `void*`).
-8. **Custom Cleanup Functions** – Allow users to define custom cleanup logic for keys/values.
+- C compiler (clang)
+- CMake 3.19+
+- libsodium
 
-- 9. **Load Factor Monitoring** – Keep track of the table’s load factor.
+## Building
 
-10. **Thread Safety** – Consider adding thread safety if you're working in a multi-threaded environment.
+```bash
+mkdir build && cd build
+cmake ..
+make
+```
 
-### Password Manager Todo:
+## Usage
 
-- Finish write vault routine
-- Finish read vault routine
-- Implement adding and removing password from vaults
+Run the compiled binary:
+```bash
+./build/main
+```
+
+This will prompt you to either create a new vault or open an existing one.
+
+## Project Structure
+
+```
+otd/
+├── include/          # Header files
+│   ├── hash_table.h
+│   ├── vault.h
+│   ├── generics.h
+│   └── vault/
+├── src/              # Source files
+│   ├── main.c
+│   ├── vault.c
+│   ├── hash_table.c
+│   ├── generics.c
+│   └── vault/
+├── build/            # Build output
+├── CMakeLists.txt
+└── README.md
+```
+
+## Security
+
+- Master passwords are hashed using libsodium's `crypto_pwhash` with sensitive resource limits
+- Keys are derived using HMAC-SHA256
+- All cryptographic operations use libsodium's secure implementations
