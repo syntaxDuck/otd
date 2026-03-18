@@ -30,8 +30,10 @@ void print_generic(const GenericValue gv) {
   switch (gv.type) {
   case TYPE_CHAR:
     printf("%c", *(char *)(gv.val));
+    break;
   case TYPE_INT:
     printf("%d", *(int *)(gv.val));
+    break;
   case TYPE_CHAR_POINTER:
     printf("%s", (char *)gv.val);
     break;
