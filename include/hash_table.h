@@ -28,6 +28,8 @@ enum hash_function { DJB2, CUSTOM };
 // Hash-related functions
 unsigned long ht_get_index(HashTable *table, const char *str);
 unsigned long djb2_hash(const char *str, size_t size);
+void ht_set_hash_function(HashTable *table,
+                          unsigned long (*hash_function)(const char *, size_t));
 
 // Core functionality
 HashTable *ht_create(int hash_type, size_t size);

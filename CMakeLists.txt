@@ -17,6 +17,8 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -L/opt/homebrew/lib")
 
 # Define source files
 file(GLOB SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
+file(GLOB VAULT_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/vault/*.c")
+list(APPEND SOURCES ${VAULT_SOURCES})
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBSODIUM REQUIRED libsodium)
